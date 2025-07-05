@@ -69,14 +69,14 @@ Ensure these directories exist:
 
 - `public/uploads`: This is where uploaded images will be stored.
 
-You can create them manually or use these commands from your project's root:
+If not created, you can create them manually or use these commands from your project's root:
 
     mkdir -p views
     mkdir -p public/uploads
 
 **4. Place Application Files:**
 
-- Make sure your main application file (e.g., `app.js` or `index.js`) is in the project's root directory.
+- Make sure your main application file (e.g., index.js`) is in the project's root directory.
 
 - Place the `index.ejs` file inside the `views` directory.
 
@@ -87,7 +87,7 @@ You can create them manually or use these commands from your project's root:
 
 From your project's root directory in the terminal, execute:
 
-    node app.js
+    node index.js
 
 You should see output similar to this:
 
@@ -123,7 +123,7 @@ You can configure the application using environment variables:
 
 - `PORT`: The port on which the Express server will listen (default: 3000).
 
-    - Example: `PORT=8080 node app.js`
+    - Example: `PORT=8080 node index.js`
 
 - `MONGO_URL`: The connection string for your MongoDB database (default: `mongodb://127.0.0.1:27017/dev`).
 
