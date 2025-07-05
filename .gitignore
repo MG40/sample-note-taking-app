@@ -16,7 +16,7 @@
     01-code/public/uploads/*
     !01-code/public/uploads/.gitkeep
     # Ignore if accidentally created in 02-container/
-    02-container/public/uploads/*
+    02-container/public/uploads/
     !02-container/public/uploads/.gitkeep
 
     # General Node.js related files that might appear at the root or other places
