@@ -44,7 +44,7 @@ Ensure these directories exist in your project's root:
 
 - `public/uploads`: This is where uploaded images will be stored.
 
-You can create them manually or use these commands from your project's root:
+If not, you can create them manually or use these commands from your project's root:
 
     mkdir -p views
     mkdir -p public/uploads
