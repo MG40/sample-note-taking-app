@@ -48,24 +48,6 @@ If you have the code in a Git repository, clone it:
 
 If you downloaded a ZIP file, extract it and navigate into the project folder.
 
-### 2. Create Necessary Directories:
-Ensure these directories exist in your project's root:
-
-- `views:` Contains your EJS template files.
-
-- `public/uploads:` This is where uploaded images will be stored (though this directory will be inside the container, it's good to have it for local context).
-
-You can create them manually or use these commands from your project's root:
-
-    mkdir -p views
-    mkdir -p public/uploads
-
-### 3.Place Application Files:
-
-- Make sure your main application file (`app.js` or `index.js`), `Dockerfile`, and `k8s-manifests.yaml` (or whatever you named your Kubernetes manifest file) are all in the project's root directory.
-
-- Place the `index.ejs` file inside the `views` directory.
-
 ## Running the Application on Minikube
 Follow these steps carefully to deploy your application to your local Minikube cluster.
 
@@ -91,6 +73,7 @@ You will see output confirming that your shell's Docker environment variables ha
 ### 4. Build Your Node.js Application Docker Image (into Minikube):
 Navigate to your project's root directory (where your Dockerfile is) and build the image:
 
+    cd ../02-container
     docker build -t sample-note-app .
 
 You should see the build process complete successfully. You can verify the image is now in Minikube's Docker daemon by running docker images.
