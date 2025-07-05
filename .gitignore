@@ -1,0 +1,60 @@
+    # .gitignore for Sample Note Taking App
+    # This file is located in the project root.
+    # Paths are relative to this root directory.
+
+    # 01-code/ (Node.js Application Source)
+    # Node.js dependency directory
+    01-code/node_modules/
+    02-container/node_modules/
+    # npm debug logs
+    01-code/npm-debug.log*
+    # Environment variables (sensitive, local to development)
+    01-code/.env
+
+    # User-uploaded content directories (CRITICAL: DO NOT COMMIT ACTUAL UPLOADS)
+    # Track the directory by including .gitkeep, but ignore all other content.
+    01-code/public/uploads/*
+    !01-code/public/uploads/.gitkeep
+    # Ignore if accidentally created in 02-container/
+    02-container/public/uploads/
+
+    # General Node.js related files that might appear at the root or other places
+    npm-debug.log*
+    .env
+
+    # Build artifacts (general, if any are created at root or specific build dirs)
+    build/
+    dist/
+
+    # Docker related (02-container/ contains source Dockerfile/docker-compose, so they are tracked)
+    # Docker build context temporary files (less common to ignore explicitly, but good to know)
+    # .dockerignore # This file itself should be tracked if used
+
+    # Kubernetes related (03-k8s/ contains manifests, which are tracked)
+    # Local Kubernetes configuration files (should never be committed)
+    .kube/config # If your kubeconfig somehow ends up in the repo root
+
+    # Operating System Files
+    .DS_Store # macOS
+    Thumbs.db # Windows
+    ehthumbs.db # Windows
+    .Spotlight-V100 # macOS
+    .Trashes # macOS
+    ._* # macOS resource forks
+
+    # IDE specific files
+    .vscode/ # VS Code settings (optional, remove if you want to share workspace settings)
+    .idea/ # IntelliJ/WebStorm IDE files
+    *.sublime-project
+    *.sublime-workspace
+
+    # Editor backup files
+    *~
+    *.bak
+    *.swp
+    .fuse_hidden*
+
+    # Logs (general log files)
+    logs/
+    *.log
+    

@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  labels:
+    app: mongodb
+spec:
+  accessModes:
+    - ReadWriteOnce # This PVC can be mounted as read-write by a single node
+  resources:
+    requests:
+      storage: 1Gi # Request 1 Gigabyte of storage for MongoDB data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+  labels:
+    app: mongodb
+spec:
+  replicas: 3 # Increased replicas for demonstration of scaling (all on one Minikube node)
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:latest # Use the latest official MongoDB Docker image
+          imagePullPolicy: IfNotPresent # Pull the image only if it's not already present locally
+          ports:
+            - containerPort: 27017 # MongoDB's default port
+          env:
+            # Use Kubernetes Secrets for sensitive MongoDB credentials (BEST PRACTICE)
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-creds # Name of the secret created via kubectl
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-creds # Name of the secret created via kubectl
+                  key: password
+          volumeMounts:
+            # Mount the persistent volume at MongoDB's data directory
+            - name: mongo-storage
+              mountPath: /data/db
+          resources: # Define resource requests and limits (BEST PRACTICE)
+            requests:
+              memory: "256Mi"
+              cpu: "250m" # 250 milliCPU = 0.25 CPU core
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        # Link the volume mount to the PersistentVolumeClaim
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc # Reference the PVC created above
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service # Name of the service for internal communication
+  labels:
+    app: mongodb
+spec:
+  selector:
+    app: mongodb # Selects pods with the label 'app: mongodb'
+  ports:
+    - protocol: TCP
+      port: 27017 # Service port
+      targetPort: 27017 # Target port on the pod
+  type: ClusterIP # Internal service, only accessible within the cluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: note-app-deployment
+  labels:
+    app: note-app
+spec:
+  replicas: 3 # Increased replicas for demonstration of scaling (all on one Minikube node)
+  selector:
+    matchLabels:
+      app: note-app
+  template:
+    metadata:
+      labels:
+        app: note-app
+    spec:
+      containers:
+        - name: note-app
+          image: sample-note-app:latest # Your custom Node.js app Docker image
+          imagePullPolicy: IfNotPresent # Use local image if available (important for Minikube)
+          ports:
+            - containerPort: 3000 # Your Node.js app's listening port
+          env:
+            # MongoDB connection URL for your Node.js app
+            # It uses the 'mongodb-service' name for internal Kubernetes DNS resolution
+            # and retrieves credentials from the secret.
+            - name: MONGO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-creds # Name of the secret created via kubectl
+                  key: username
+            - name: MONGO_URL_PASSWORD # Placeholder to build full URL
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-creds
+                  key: password
+            - name: FULL_MONGO_URL # Construct the full URL using other env vars
+              value: mongodb://$(MONGO_URL):$(MONGO_URL_PASSWORD)@mongodb-service:27017/dev?authSource=admin
+          resources: # Define resource requests and limits (BEST PRACTICE)
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      # IMPORTANT: Adjust your app.js to use the FULL_MONGO_URL environment variable
+      # instead of directly MONGO_URL, as we're now constructing it.
+      # For example, in app.js: const mongoURL = process.env.FULL_MONGO_URL || '...';
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: note-app-service # Name of the service for external access
+  labels:
+    app: note-app
+spec:
+  selector:
+    app: note-app # Selects pods with the label 'app: note-app'
+  ports:
+    - protocol: TCP
+      port: 3000 # Service port
+      targetPort: 3000 # Target port on the pod
+  type: LoadBalancer # Changed to LoadBalancer for cloud environments (Minikube will expose as NodePort)

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Note Taking App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #000000; }
+        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; min-height: 100px; font-size: 16px; }
+        input[type="file"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; background-color: #f9f9f9; }
+        button { padding: 10px 15px; background-color: #000000; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #000000; }
+        .note { background-color: #e9f7ff; border: 1px solid #cceeff; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+        .note p { margin: 0; line-height: 1.6; }
+        .note img { max-width: 100%; height: auto; border-radius: 4px; margin-top: 10px; }
+        .error-message { color: red; text-align: center; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sample Note Taking App</h1>
+
+        <% if (errorMessage) { %>
+            <div class="error-message"><%= errorMessage %></div>
+        <% } %>
+
+        <form action="/note" method="POST" enctype="multipart/form-data">
+            <textarea name="description" placeholder="Write your note here..." rows="5"></textarea>
+            <label for="imageUpload">Upload Image (Optional):</label>
+            <input type="file" name="image" id="imageUpload" accept="image/*">
+            <button type="submit">Save Note</button>
+        </form>
+
+        <div class="notes-list">
+            <% if (notes && notes.length > 0) { %>
+                <% notes.forEach(function(note) { %>
+                    <div class="note">
+                        <%- note.description %>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No notes yet. Start by adding one above!</p>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
